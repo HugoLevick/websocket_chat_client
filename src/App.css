@@ -59,7 +59,7 @@ body {
 }
 .people-list ul {
   padding: 20px;
-  height: 770px;
+  height: auto;
 }
 .people-list ul li {
   padding-bottom: 20px;
@@ -76,6 +76,10 @@ body {
 }
 .people-list .status {
   color: #92959e;
+}
+
+.people-list .list * {
+  cursor: pointer;
 }
 
 .chat {

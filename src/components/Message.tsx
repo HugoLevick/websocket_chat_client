@@ -1,38 +1,38 @@
-import MessageI from "./interfaces/message.interface";
+import MessageProps from "../props/message-props";
 
-function Message(data: MessageI) {
+function Message({ message, self }: MessageProps) {
   //prettier-ignore
   return (
     <>
       <li className="clearfix">
         <div
-          className={`message-data ${data.message.self ? "align-right" : ""}`}
+          className={`message-data ${self ? "align-right" : ""}`}
         >
-          {data.message.self ? (
+          {self ? (
             <>
               <span className="message-data-time">
-                {data.message.sentAt.toLocaleString()}
+                {message.sentAt.toLocaleString()}
               </span>
-              <span className="message-data-name">{data.message.sentBy}</span>
+              <span className="message-data-name">{message.sentBy.name}</span>
               <i className="fa fa-circle me"></i>
             </>
           ) : (
             <>
               <span className="message-data-name">
-                <i className="fa fa-circle online"></i> {data.message.sentBy}
+                <i className="fa fa-circle online"></i> {message.sentBy.name}
               </span>
               <span className="message-data-time">
-                {data.message.sentAt.toLocaleString()}
+                {message.sentAt.toLocaleString()}
               </span>
             </>
           )}
         </div>
         <div
           className={`message ${
-            data.message.self ? "float-right my-message" : "other-message"
+            self ? "float-right my-message" : "other-message"
           }`}
         >
-          {data.message.content}
+          {message.content}
         </div>
       </li>
     </>
