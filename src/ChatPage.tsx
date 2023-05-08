@@ -1,28 +1,33 @@
-import { useEffect, useState } from "react";
-import "./App.css";
+import { useEffect, useRef, useState } from "react";
+
+import "./ChatPage.css";
 import { Chat } from "./components/Chat";
 import ProfileMessage from "./components/Profile-Message";
 import { UserI } from "./props/user";
 import Message from "./props/message";
-
-import getRoomSocket from "./socket";
 import MessageI from "./props/message";
+import getRoomSocket from "./socket";
 ("./socket");
 
-function App({ selfUser }: { selfUser: UserI }) {
+function ChatPage({ selfUser }: { selfUser: UserI }) {
+  const { jwt } = localStorage;
+  if (!jwt) {
+    const win: Window = window;
+    win.location = "/login";
+  }
   let mounted = false;
   //const [fooEvents, setFooEvents] = useState([]);
   const [pMessages, setPMessages] = useState([] as MessageI[]);
   const [currentChatUser, setCurrentChatUser] = useState({
     id: "general",
     name: "General",
-    status: "online",
     profilePictureUrl:
       "https://cdn2.iconfinder.com/data/icons/colored-simple-circle-volume-01/128/circle-flat-general-54205e542-512.png",
   } as UserI);
 
   //Socket
-  const [socket, setSocket] = useState(getRoomSocket());
+  const [socket, setSocket] = useState(getRoomSocket(jwt));
+  const bottomChatElement = useRef(null as null | HTMLDivElement);
 
   //console.log(socket.)
 
@@ -34,47 +39,15 @@ function App({ selfUser }: { selfUser: UserI }) {
     async function getMessages() {
       const newM = await new Promise<Message[]>(async (res) => {
         await new Promise((res) => {
-          setTimeout(() => res(true), 1000);
+          setTimeout(() => res(true), 100);
         });
 
-        return res([
-          {
-            content: "Test",
-            sentAt: new Date(),
-            sentBy: {
-              id: "1",
-              name: "Motomami",
-              status: "online",
-              profilePictureUrl:
-                "https://static3.mujerhoy.com/www/multimedia/202202/14/media/cortadas/pilar-tobella-madre-rosalia-kDDH-U160947660148ILC-624x624@MujerHoy.jpg",
-            },
-          },
-          {
-            content: "Eres bien chistosa motomami",
-            sentAt: new Date(),
-            sentBy: {
-              id: "2",
-              name: currentChatUser.name,
-              status: "online",
-              profilePictureUrl:
-                "https://m.media-amazon.com/images/I/914KvMZNh8L._AC_SL1500_.jpg",
-            },
-          },
-          {
-            content: "Asi somos las motomamis",
-            sentAt: new Date(),
-            sentBy: {
-              id: "1",
-              name: "Motomami",
-              status: "online",
-              profilePictureUrl:
-                "https://static3.mujerhoy.com/www/multimedia/202202/14/media/cortadas/pilar-tobella-madre-rosalia-kDDH-U160947660148ILC-624x624@MujerHoy.jpg",
-            },
-          },
-        ]);
+        return res([]);
       });
 
-      if (mounted) setPMessages(newM);
+      if (mounted) {
+        setPMessages(newM);
+      }
     }
 
     function onConnect() {
@@ -86,8 +59,7 @@ function App({ selfUser }: { selfUser: UserI }) {
     }
 
     function handleNewMessage(newMessage: MessageI) {
-      console.log(newMessage);
-      setPMessages([...pMessages, newMessage]);
+      setPMessages((pMessages) => [...pMessages, newMessage]);
     }
 
     // function onFooEvent(value) {
@@ -98,7 +70,6 @@ function App({ selfUser }: { selfUser: UserI }) {
     socket.on("disconnect", onDisconnect);
     socket.on("receive-message", handleNewMessage);
     socket.connect();
-    console.log(socket.auth);
     //socket.on("foo", onFooEvent);
 
     getMessages();
@@ -113,7 +84,7 @@ function App({ selfUser }: { selfUser: UserI }) {
     if (user.id !== currentChatUser.id) {
       setPMessages([]);
       setCurrentChatUser(user);
-      setSocket(getRoomSocket(user.id));
+      setSocket(getRoomSocket(jwt, user.id));
     }
   }
   return (
@@ -130,7 +101,7 @@ function App({ selfUser }: { selfUser: UserI }) {
               user={{
                 id: "general",
                 name: "General",
-                status: "online",
+                color: "#FFFFFF",
                 profilePictureUrl:
                   "https://cdn2.iconfinder.com/data/icons/colored-simple-circle-volume-01/128/circle-flat-general-54205e542-512.png",
               }}
@@ -141,7 +112,7 @@ function App({ selfUser }: { selfUser: UserI }) {
               user={{
                 id: "1",
                 name: "Motomami",
-                status: "online",
+                color: "#FFFFFF",
                 profilePictureUrl:
                   "https://static3.mujerhoy.com/www/multimedia/202202/14/media/cortadas/pilar-tobella-madre-rosalia-kDDH-U160947660148ILC-624x624@MujerHoy.jpg",
               }}
@@ -152,7 +123,7 @@ function App({ selfUser }: { selfUser: UserI }) {
               user={{
                 id: "2",
                 name: "Motopapi",
-                status: "offline",
+                color: "#FFFFFF",
                 profilePictureUrl:
                   "https://m.media-amazon.com/images/I/914KvMZNh8L._AC_SL1500_.jpg",
               }}
@@ -166,10 +137,11 @@ function App({ selfUser }: { selfUser: UserI }) {
           selfUser={selfUser}
           previousMessages={pMessages}
           socket={socket}
+          bottomChatElement={bottomChatElement}
         />
       </div>
     </>
   );
 }
 
-export default App;
+export default ChatPage;

@@ -1,10 +1,6 @@
 import ProfileMessageProps from "../props/profile-message-props";
 
 function ProfileMessage({ user, customClickEvent }: ProfileMessageProps) {
-  if (!user.profilePictureUrl)
-    user.profilePictureUrl =
-      "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png";
-
   return (
     <li
       className="clearfix"
@@ -16,15 +12,7 @@ function ProfileMessage({ user, customClickEvent }: ProfileMessageProps) {
       <div className="about">
         <div className="name">{user.name}</div>
         <div className="status">
-          {user.status === "online" ? (
-            <>
-              <i className="fa fa-circle online"></i> online
-            </>
-          ) : (
-            <>
-              <i className="fa fa-circle offline"></i> offline
-            </>
-          )}
+          <i className="fa fa-circle online"></i> online
         </div>
       </div>
     </li>

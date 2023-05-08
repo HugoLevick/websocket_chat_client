@@ -1,6 +1,6 @@
 import MessageProps from "../props/message-props";
 
-function Message({ message, self }: MessageProps) {
+function Message({ message, color, self }: MessageProps) {
   //prettier-ignore
   return (
     <>
@@ -19,7 +19,7 @@ function Message({ message, self }: MessageProps) {
           ) : (
             <>
               <span className="message-data-name">
-                <i className="fa fa-circle online"></i> {message.sentBy.name}
+                <i className="fa fa-circle online" style={{color}}></i> {message.sentBy.name}
               </span>
               <span className="message-data-time">
                 {message.sentAt.toLocaleString()}

@@ -7,6 +7,7 @@ export const Chat = function ({
   user,
   selfUser,
   socket,
+  bottomChatElement,
 }: ChatProps) {
   const [message, setMessage] = useState("");
 
@@ -17,6 +18,7 @@ export const Chat = function ({
         sentAt: new Date(),
         sentBy: m.sentBy,
       }}
+      color={m.sentBy.color}
       self={m.sentBy.id === selfUser.id}
       key={i}
     />
@@ -41,7 +43,18 @@ export const Chat = function ({
         </div>
 
         <div className="chat-history">
-          <ul>{messageElements}</ul>
+          <ul>
+            {messageElements}
+            <div
+              style={{ float: "left", clear: "both" }}
+              ref={(el) => {
+                bottomChatElement.current = el;
+                bottomChatElement.current?.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
+            ></div>
+          </ul>
         </div>
 
         <div className="chat-message clearfix">

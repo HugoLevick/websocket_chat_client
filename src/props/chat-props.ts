@@ -7,4 +7,7 @@ export interface ChatProps {
   selfUser: UserI;
   previousMessages: MessageI[];
   socket: Socket;
+  bottomChatElement:
+    | React.MutableRefObject<HTMLDivElement>
+    | React.MutableRefObject<null>;
 }
