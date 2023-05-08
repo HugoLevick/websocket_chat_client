@@ -5,7 +5,10 @@ function LoginPage() {
   const [error, setError] = useState(null as null | Error);
   const [name, setName] = useState(null as null | string);
   const [password, setPassword] = useState(null as null | string);
-  if (error) alert(error.message);
+  if (error) {
+    alert(error.message);
+    setError(null);
+  }
 
   async function sendLoginRequest(event: FormEvent) {
     event.preventDefault();
