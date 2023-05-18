@@ -27,11 +27,9 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
 
   //Socket
   const [socket, setSocket] = useState(getRoomSocket(jwt));
-  const bottomChatElement = useRef(null as null | HTMLDivElement);
-
-  //console.log(socket.)
-
   const [isConnected, setIsConnected] = useState(socket.connected);
+  //Scroll down each message
+  const bottomChatElement = useRef(null as null | HTMLDivElement);
 
   useEffect(() => {
     mounted = true;
@@ -59,24 +57,24 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
     }
 
     function handleNewMessage(newMessage: MessageI) {
-      setPMessages((pMessages) => [...pMessages, newMessage]);
+      //Mostrar el mensaje
+      if (newMessage.sentBy.id === currentChatUser?.id) {
+        setPMessages((pMessages) => [...pMessages, newMessage]);
+      }
     }
-
-    // function onFooEvent(value) {
-    //   setFooEvents((previous) => [...previous, value]);
-    // }
 
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("receive-message", handleNewMessage);
+    socket.on("error", (err) => {
+      alert(err);
+    });
     socket.connect();
-    //socket.on("foo", onFooEvent);
 
     getMessages();
     return () => {
       mounted = false;
       socket.disconnect();
-      //socket.off("foo", onFooEvent);
     };
   }, [currentChatUser, mounted]);
 
@@ -110,8 +108,8 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
 
             <ProfileMessage
               user={{
-                id: "1",
-                name: "Motomami",
+                id: "6",
+                name: "Juano",
                 color: "#FFFFFF",
                 profilePictureUrl:
                   "https://static3.mujerhoy.com/www/multimedia/202202/14/media/cortadas/pilar-tobella-madre-rosalia-kDDH-U160947660148ILC-624x624@MujerHoy.jpg",
@@ -121,8 +119,8 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
 
             <ProfileMessage
               user={{
-                id: "2",
-                name: "Motopapi",
+                id: "7",
+                name: "Hugo",
                 color: "#FFFFFF",
                 profilePictureUrl:
                   "https://m.media-amazon.com/images/I/914KvMZNh8L._AC_SL1500_.jpg",
@@ -133,7 +131,7 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
         </div>
 
         <Chat
-          user={currentChatUser}
+          currentChatUser={currentChatUser}
           selfUser={selfUser}
           previousMessages={pMessages}
           socket={socket}

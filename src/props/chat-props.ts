@@ -3,7 +3,7 @@ import MessageI from "./message";
 import { UserI } from "./user";
 
 export interface ChatProps {
-  user?: UserI;
+  currentChatUser?: UserI;
   selfUser: UserI;
   previousMessages: MessageI[];
   socket: Socket;
