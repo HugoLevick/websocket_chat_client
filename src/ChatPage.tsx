@@ -70,10 +70,18 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
       }
     }
 
+    function handleInvalidToken() {
+      sessionStorage.removeItem("jwt");
+      alert("Por favor, vuelve a iniciar sesión");
+      const w: Window = window;
+      w.location = "/signup";
+    }
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("receive-message", handleNewMessage);
     socket.on("general-message", handleGeneralMessage);
+    socket.on("invalid-token", handleInvalidToken);
     socket.on("error", (err) => {
       alert(err);
     });
