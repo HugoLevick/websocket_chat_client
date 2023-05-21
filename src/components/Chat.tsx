@@ -69,7 +69,7 @@ export const Chat = function ({
           <form
             onSubmit={(ev) => {
               ev.preventDefault();
-              socket.emit("new-message", socket.id, {
+              socket.emit("new-message", {
                 content: message,
                 toUserId: currentChatUser?.id,
               });
