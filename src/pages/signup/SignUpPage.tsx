@@ -9,7 +9,10 @@ function SignUpPage() {
   const [profilePictureUrl, setProfilePictureUrl] = useState(
     null as null | string
   );
-  if (error) alert(error.message);
+  if (error) {
+    alert(error.message);
+    setError(null);
+  }
 
   async function createAccount(event: FormEvent) {
     event.preventDefault();
@@ -18,7 +21,7 @@ function SignUpPage() {
       name,
       password,
       profilePictureUrl,
-      color,
+      color: color || "$000000",
     };
     try {
       const accountCreated = await fetch(url, {

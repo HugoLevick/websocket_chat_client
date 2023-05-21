@@ -63,9 +63,17 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
       }
     }
 
+    function handleGeneralMessage(newMessage: MessageI) {
+      //Mostrar el mensaje
+      if (currentChatUser.id === "general") {
+        setPMessages((pMessages) => [...pMessages, newMessage]);
+      }
+    }
+
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
     socket.on("receive-message", handleNewMessage);
+    socket.on("general-message", handleGeneralMessage);
     socket.on("error", (err) => {
       alert(err);
     });
