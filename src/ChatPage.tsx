@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 
 import "./ChatPage.css";
@@ -17,7 +17,7 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
   }
   //const [fooEvents, setFooEvents] = useState([]);
   const [pMessages, setPMessages] = useState(null as MessageI[] | null);
-  const [searchUsersValue, setSearchUsersValue] = useState("" as string);
+
   const [users, setUsers] = useState({
     online: [],
     offline: [],
