@@ -1,18 +1,26 @@
 import { ReactElement, useEffect, useRef, useState } from "react";
+import "react-toastify/dist/ReactToastify.css";
 
 import "./ChatPage.css";
 import { Chat } from "./components/Chat";
 import ProfileMessage from "./components/Profile-Message";
 import { UserI } from "./props/user";
-import Message from "./props/message";
 import MessageI from "./props/message";
-import getSocket from "./socket";
+import { Socket } from "socket.io-client";
+import { ToastContainer, toast } from "react-toastify";
 
-function ChatPage({ selfUser }: { selfUser: UserI }) {
+function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
   let mounted = false;
+  if (!selfUser) {
+    const win: Window = window;
+    win.location = "/login";
+  }
   //const [fooEvents, setFooEvents] = useState([]);
   const [pMessages, setPMessages] = useState(null as MessageI[] | null);
-  const [users, setUsers] = useState([] as UserI[]);
+  const [users, setUsers] = useState({
+    online: [],
+    offline: [],
+  } as { online: UserI[]; offline: UserI[] });
   const [currentChatUser, setCurrentChatUser] = useState({
     id: "general",
     name: "General",
@@ -25,31 +33,43 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
     const win: Window = window;
     win.location = "/login";
   }
-  const [socket] = useState(getSocket(jwt));
   const [isConnected, setIsConnected] = useState(socket.connected);
 
   //Scroll down each message
   const bottomChatElement = useRef(null as null | HTMLDivElement);
 
   let usersElements: ReactElement[] = [];
-  for (const user of users) {
-    usersElements.push(
-      <ProfileMessage user={user} customClickEvent={changeChat} />
-    );
+  for (const onlineUser of users.online) {
+    if (onlineUser.id !== selfUser.id)
+      usersElements.push(
+        <ProfileMessage user={onlineUser} customClickEvent={changeChat} />
+      );
   }
 
   useEffect(() => {
     mounted = true;
 
     async function getMessagesAndUsers() {
-      const newM = await new Promise<Message[]>(async (res) => {
-        await new Promise((res) => {
-          setTimeout(() => res(true), 1000);
-        });
-        return res([]);
-      });
+      const messagesFetch = await fetch(
+        `${import.meta.env.VITE_API_HOST}/users/${currentChatUser.id}/messages`,
+        {
+          headers: { Authorization: `Bearer ${jwt}` },
+        }
+      ).then((res) => res.json());
 
-      const users = await fetch("/users").then((res) => res.json());
+      const newM = [];
+      for (const message of messagesFetch) {
+        newM.push({
+          ...message,
+          sentBy: JSON.parse(message.fromUser),
+        });
+      }
+
+      console.log(newM);
+
+      const users = await fetch(`${import.meta.env.VITE_API_HOST}/users`).then(
+        (res) => res.json()
+      );
 
       if (mounted) {
         setPMessages(newM);
@@ -67,12 +87,17 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
 
     function handleNewMessage(newMessage: MessageI) {
       //Mostrar el mensaje
-      console.log("new");
-      if (newMessage.sentBy.id === currentChatUser.id) {
+      if (
+        newMessage.sentBy.id === currentChatUser.id ||
+        newMessage.sentBy.id === selfUser.id
+      ) {
         setPMessages((pMessages) => {
           if (pMessages) return [...pMessages, newMessage];
           else return [newMessage];
         });
+      } else {
+        console.log("toast");
+        toast("Nuevo mensaje de " + newMessage.sentBy.name);
       }
     }
 
@@ -124,6 +149,7 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
   }
   return (
     <>
+      <ToastContainer />
       <h1>{isConnected ? "Conectado" : "Desconectado"}</h1>
       <div className="container clearfix">
         <div className="people-list" id="people-list">

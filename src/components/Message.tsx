@@ -11,7 +11,7 @@ function Message({ message, color, self }: MessageProps) {
                 {message.sentAt.toLocaleString()}
               </span>
               <span className="message-data-name">{message.sentBy.name}</span>
-              <i className="fa fa-circle me" style={{ color }}></i>
+              <i className="fa fa-circle online" style={{ color }}></i>
             </>
           ) : (
             <>
