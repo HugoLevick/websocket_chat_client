@@ -5,7 +5,7 @@ import { UserI } from "./user";
 export interface ChatProps {
   currentChatUser?: UserI;
   selfUser: UserI;
-  previousMessages: MessageI[];
+  previousMessages: MessageI[] | null;
   socket: Socket;
   bottomChatElement:
     | React.MutableRefObject<HTMLDivElement>

@@ -9,8 +9,15 @@ import {
 } from "react-router-dom";
 import LoginPage from "./pages/login/LoginPage.tsx";
 import SignUpPage from "./pages/signup/SignUpPage.tsx";
+import getSocket from "./socket.ts";
 
 async function startApp() {
+  const { jwt } = localStorage;
+  if (!jwt) {
+    const win: Window = window;
+    win.location = "/login";
+  }
+
   const user = await new Promise<UserI>(async (res) => {
     await new Promise((res) => {
       setTimeout(() => res(true), 300);
@@ -25,10 +32,12 @@ async function startApp() {
     });
   });
 
+  const socket = getSocket(jwt);
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/">
-        <Route index element={<ChatPage selfUser={user} />} />
+        <Route index element={<ChatPage selfUser={user} socket={socket} />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignUpPage />} />
       </Route>

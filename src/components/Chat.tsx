@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, ReactElement, useRef, useState } from "react";
 import { ChatProps } from "../props/chat-props";
 import Message from "./Message";
 
@@ -12,18 +12,21 @@ export const Chat = function ({
   const [message, setMessage] = useState("");
   const messageElement = useRef(null as HTMLTextAreaElement | null);
 
-  const messageElements = previousMessages.map((m, i) => (
-    <Message
-      message={{
-        content: m.content,
-        sentAt: new Date(m.sentAt),
-        sentBy: m.sentBy,
-      }}
-      color={m.sentBy.color}
-      self={m.sentBy.id == selfUser.id}
-      key={i}
-    />
-  ));
+  let messageElements: ReactElement[] = [];
+  if (previousMessages) {
+    messageElements = previousMessages.map((m, i) => (
+      <Message
+        message={{
+          content: m.content,
+          sentAt: new Date(m.sentAt),
+          sentBy: m.sentBy,
+        }}
+        color={m.sentBy.color}
+        self={m.sentBy.id == selfUser.id}
+        key={i}
+      />
+    ));
+  }
   return (
     <>
       <div className="chat">
@@ -55,7 +58,14 @@ export const Chat = function ({
           }}
         >
           <ul>
-            {messageElements}
+            {previousMessages ? (
+              messageElements
+            ) : (
+              <>
+                <li className="clearfix animated-background"></li>
+                <li className="clearfix animated-background"></li>
+              </>
+            )}
             <div
               style={{ float: "left", clear: "both" }}
               ref={(el) => {
@@ -69,6 +79,7 @@ export const Chat = function ({
           <form
             onSubmit={(ev) => {
               ev.preventDefault();
+              console.log("emit");
               socket.emit("new-message", {
                 content: message,
                 toUserId: currentChatUser?.id,

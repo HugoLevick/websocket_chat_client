@@ -3,7 +3,6 @@ import MessageProps from "../props/message-props";
 function Message({ message, color, self }: MessageProps) {
   //prettier-ignore
   return (
-    <>
       <li className="clearfix">
         <div className={`message-data ${self ? "align-right" : ""}`}>
           {self ? (
@@ -34,7 +33,6 @@ function Message({ message, color, self }: MessageProps) {
           {message.content}
         </div>
       </li>
-    </>
   );
 }
 

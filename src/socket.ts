@@ -2,13 +2,11 @@ import { io } from "socket.io-client";
 
 const apiHost = import.meta.env.VITE_API_HOST;
 
-export default function getRoomSocket(token: string, room: string = "general") {
+export default function getSocket(token: string) {
+  console.log("Get socket");
   const options = {
     transports: ["websocket"],
-    autoConnect: false,
-    query: {
-      roomName: `chat#${room}`,
-    },
+    autoConnect: true,
     auth: {
       token,
     },

@@ -39,6 +39,7 @@ body {
 
 .people-list {
   width: 260px;
+  margin-bottom: 0;
   float: left;
 }
 .people-list .search {
@@ -58,8 +59,11 @@ body {
   left: -25px;
 }
 .people-list ul {
+  margin: 0;
   padding: 20px;
-  height: auto;
+  padding-bottom: 0;
+  overflow: auto;
+  height: 440px;
 }
 .people-list ul li {
   padding-bottom: 20px;
@@ -119,6 +123,7 @@ body {
   padding: 30px 30px 20px;
   border-bottom: 2px solid white;
   overflow-y: scroll;
+  overflow-x: hidden;
   height: 250px;
 }
 .chat .chat-history .message-data {
@@ -236,4 +241,39 @@ body {
   content: " ";
   clear: both;
   height: 0;
+}
+
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -800px 0;
+  }
+  100% {
+    background-position: 800px 0;
+  }
+}
+
+.animated-background {
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background-color: #f6f7f8;
+  background: linear-gradient(to right, #eeeeee 8%, #bbbbbb 18%, #eeeeee 33%);
+  background-size: 800px 104px;
+  height: 70px;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.background-masker {
+  background-color: #fff;
+  position: absolute;
+}
+
+.btn-divide-left {
+  top: 0;
+  left: 25%;
+  height: 100%;
+  width: 5%;
 }
