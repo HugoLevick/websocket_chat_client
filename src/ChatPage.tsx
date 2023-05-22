@@ -6,9 +6,9 @@ import ProfileMessage from "./components/Profile-Message";
 import { UserI } from "./props/user";
 import Message from "./props/message";
 import MessageI from "./props/message";
-import { Socket } from "socket.io-client";
+import getSocket from "./socket";
 
-function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
+function ChatPage({ selfUser }: { selfUser: UserI }) {
   let mounted = false;
   //const [fooEvents, setFooEvents] = useState([]);
   const [pMessages, setPMessages] = useState(null as MessageI[] | null);
@@ -18,7 +18,15 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
     profilePictureUrl:
       "https://cdn2.iconfinder.com/data/icons/colored-simple-circle-volume-01/128/circle-flat-general-54205e542-512.png",
   } as UserI);
+
+  const { jwt } = localStorage;
+  if (!jwt) {
+    const win: Window = window;
+    win.location = "/login";
+  }
+  const [socket] = useState(getSocket(jwt));
   const [isConnected, setIsConnected] = useState(socket.connected);
+
   //Scroll down each message
   const bottomChatElement = useRef(null as null | HTMLDivElement);
 
@@ -48,6 +56,7 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
 
     function handleNewMessage(newMessage: MessageI) {
       //Mostrar el mensaje
+      console.log("new");
       if (newMessage.sentBy.id === currentChatUser.id) {
         setPMessages((pMessages) => {
           if (pMessages) return [...pMessages, newMessage];
