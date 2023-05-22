@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { ChangeEvent, ReactElement, useEffect, useRef, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 
 import "./ChatPage.css";
@@ -17,6 +17,7 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
   }
   //const [fooEvents, setFooEvents] = useState([]);
   const [pMessages, setPMessages] = useState(null as MessageI[] | null);
+  const [searchUsersValue, setSearchUsersValue] = useState("" as string);
   const [users, setUsers] = useState({
     online: [],
     offline: [],
@@ -40,7 +41,6 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
 
   let onlineUsersElements: ReactElement[] = [];
   let offlineUsersElements: ReactElement[] = [];
-  console.log("online users");
   for (const onlineUser of users.online) {
     if (onlineUser.id !== selfUser.id)
       onlineUsersElements.push(
@@ -116,7 +116,11 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
           else return [newMessage];
         });
       } else {
-        toast("Nuevo mensaje de " + newMessage.sentBy.name);
+        toast("Nuevo mensaje de " + newMessage.sentBy.name, {
+          onClick: () => {
+            changeChat(newMessage.sentBy);
+          },
+        });
       }
     }
 
@@ -197,10 +201,6 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
       <h1>{isConnected ? "Conectado" : "Desconectado"}</h1>
       <div className="container clearfix">
         <div className="people-list" id="people-list">
-          <div className="search">
-            <input type="text" placeholder="search" />
-            <i className="fa fa-search"></i>
-          </div>
           <ul className="list">
             <ProfileMessage
               user={{

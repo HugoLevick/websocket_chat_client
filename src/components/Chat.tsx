@@ -43,12 +43,16 @@ export const Chat = function ({
               {messageElements.length} mensajes
             </div>
           </div>
-          <i className="fa fa-star"></i>
         </div>
 
         <div
           className="chat-history"
           ref={(divElement) => {
+            if (divElement?.scrollTop === 0) {
+              bottomChatElement.current?.scrollIntoView();
+              return;
+            }
+
             if (
               (divElement?.scrollHeight || 0) -
                 (divElement?.scrollTop || 1000) <
@@ -107,8 +111,6 @@ export const Chat = function ({
                 }
               }}
             ></textarea>
-            <i className="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
-            <i className="fa fa-file-image-o"></i>
             <button type="submit">Send</button>
           </form>
         </div>
