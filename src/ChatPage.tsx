@@ -38,11 +38,30 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
   //Scroll down each message
   const bottomChatElement = useRef(null as null | HTMLDivElement);
 
-  let usersElements: ReactElement[] = [];
+  let onlineUsersElements: ReactElement[] = [];
+  let offlineUsersElements: ReactElement[] = [];
+  console.log("online users");
   for (const onlineUser of users.online) {
     if (onlineUser.id !== selfUser.id)
-      usersElements.push(
-        <ProfileMessage user={onlineUser} customClickEvent={changeChat} />
+      onlineUsersElements.push(
+        <ProfileMessage
+          user={onlineUser}
+          customClickEvent={changeChat}
+          key={onlineUser.id}
+          online={true}
+        />
+      );
+  }
+
+  for (const offlineUser of users.offline) {
+    if (offlineUser.id !== selfUser.id)
+      offlineUsersElements.push(
+        <ProfileMessage
+          user={offlineUser}
+          customClickEvent={changeChat}
+          key={offlineUser.id}
+          online={false}
+        />
       );
   }
 
@@ -67,8 +86,6 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
               : message.fromUser,
         });
       }
-
-      console.log(newM);
 
       const users = await fetch(`${import.meta.env.VITE_API_HOST}/users`).then(
         (res) => res.json()
@@ -99,7 +116,6 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
           else return [newMessage];
         });
       } else {
-        console.log("toast");
         toast("Nuevo mensaje de " + newMessage.sentBy.name);
       }
     }
@@ -115,6 +131,27 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
       }
     }
 
+    function handleOnlineUser(user: UserI) {
+      setUsers((currentUsers) => {
+        const newUsers = { ...currentUsers };
+        newUsers.online.push(user);
+        const wasOffline = newUsers.offline.findIndex((u) => u.id === user.id);
+        if (wasOffline !== -1) newUsers.offline.splice(wasOffline, 1);
+        return newUsers;
+      });
+    }
+
+    function handleOfflineUser(user: UserI) {
+      console.log("offline");
+      setUsers((currentUsers) => {
+        const newUsers = { ...currentUsers };
+        newUsers.offline.push(user);
+        const wasOnline = newUsers.online.findIndex((u) => u.id === user.id);
+        if (wasOnline !== -1) newUsers.online.splice(wasOnline, 1);
+        return newUsers;
+      });
+    }
+
     function handleInvalidToken() {
       sessionStorage.removeItem("jwt");
       alert("Por favor, vuelve a iniciar sesión");
@@ -126,6 +163,8 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
     socket.on("disconnect", onDisconnect);
     socket.on("receive-message", handleNewMessage);
     socket.on("general-message", handleGeneralMessage);
+    socket.on("online-user", handleOnlineUser);
+    socket.on("offline-user", handleOfflineUser);
     socket.on("invalid-token", handleInvalidToken);
     socket.on("error", (err) => {
       alert(err);
@@ -134,10 +173,12 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
     getMessagesAndUsers();
     return () => {
       socket
-        .off("connect")
+        .off("connect", onConnect)
         .off("disconnect")
         .off("receive-message")
         .off("general-message")
+        .off("online-user")
+        .off("offline-user")
         .off("invalid-token")
         .off("error");
       mounted = false;
@@ -169,10 +210,11 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
                 profilePictureUrl:
                   "https://cdn2.iconfinder.com/data/icons/colored-simple-circle-volume-01/128/circle-flat-general-54205e542-512.png",
               }}
+              online={true}
               customClickEvent={changeChat}
             />
-
-            {...usersElements}
+            {onlineUsersElements}
+            {offlineUsersElements}
           </ul>
         </div>
 

@@ -1,6 +1,10 @@
 import ProfileMessageProps from "../props/profile-message-props";
 
-function ProfileMessage({ user, customClickEvent }: ProfileMessageProps) {
+function ProfileMessage({
+  user,
+  online,
+  customClickEvent,
+}: ProfileMessageProps) {
   return (
     <li
       className="clearfix"
@@ -12,7 +16,15 @@ function ProfileMessage({ user, customClickEvent }: ProfileMessageProps) {
       <div className="about">
         <div className="name">{user.name}</div>
         <div className="status">
-          <i className="fa fa-circle online"></i> online
+          {online ? (
+            <>
+              <i className="fa fa-circle online"></i> online{" "}
+            </>
+          ) : (
+            <>
+              <i className="fa fa-circle offline"></i> offline{" "}
+            </>
+          )}
         </div>
       </div>
     </li>

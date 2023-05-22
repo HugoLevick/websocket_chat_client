@@ -14,7 +14,6 @@ export const Chat = function ({
 
   let messageElements: ReactElement[] = [];
   if (previousMessages) {
-    console.log(previousMessages);
     messageElements = previousMessages.map((m, i) => (
       <Message
         message={{
