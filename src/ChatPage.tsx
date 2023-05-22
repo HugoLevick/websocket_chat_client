@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 
 import "./ChatPage.css";
 import { Chat } from "./components/Chat";
@@ -12,6 +12,7 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
   let mounted = false;
   //const [fooEvents, setFooEvents] = useState([]);
   const [pMessages, setPMessages] = useState(null as MessageI[] | null);
+  const [users, setUsers] = useState([] as UserI[]);
   const [currentChatUser, setCurrentChatUser] = useState({
     id: "general",
     name: "General",
@@ -30,10 +31,17 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
   //Scroll down each message
   const bottomChatElement = useRef(null as null | HTMLDivElement);
 
+  let usersElements: ReactElement[] = [];
+  for (const user of users) {
+    usersElements.push(
+      <ProfileMessage user={user} customClickEvent={changeChat} />
+    );
+  }
+
   useEffect(() => {
     mounted = true;
 
-    async function getMessages() {
+    async function getMessagesAndUsers() {
       const newM = await new Promise<Message[]>(async (res) => {
         await new Promise((res) => {
           setTimeout(() => res(true), 1000);
@@ -41,8 +49,11 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
         return res([]);
       });
 
+      const users = await fetch("/users").then((res) => res.json());
+
       if (mounted) {
         setPMessages(newM);
+        setUsers(users);
       }
     }
 
@@ -92,7 +103,7 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
       alert(err);
     });
 
-    getMessages();
+    getMessagesAndUsers();
     return () => {
       socket
         .off("connect")
@@ -132,49 +143,7 @@ function ChatPage({ selfUser }: { selfUser: UserI }) {
               customClickEvent={changeChat}
             />
 
-            <ProfileMessage
-              user={{
-                id: "6",
-                name: "Juano",
-                color: "#FFFFFF",
-                profilePictureUrl:
-                  "https://static3.mujerhoy.com/www/multimedia/202202/14/media/cortadas/pilar-tobella-madre-rosalia-kDDH-U160947660148ILC-624x624@MujerHoy.jpg",
-              }}
-              customClickEvent={changeChat}
-            />
-
-            <ProfileMessage
-              user={{
-                id: "7",
-                name: "Hugo",
-                color: "#FFFFFF",
-                profilePictureUrl:
-                  "https://m.media-amazon.com/images/I/914KvMZNh8L._AC_SL1500_.jpg",
-              }}
-              customClickEvent={changeChat}
-            />
-
-            <ProfileMessage
-              user={{
-                id: "6",
-                name: "Juano",
-                color: "#FFFFFF",
-                profilePictureUrl:
-                  "https://static3.mujerhoy.com/www/multimedia/202202/14/media/cortadas/pilar-tobella-madre-rosalia-kDDH-U160947660148ILC-624x624@MujerHoy.jpg",
-              }}
-              customClickEvent={changeChat}
-            />
-
-            <ProfileMessage
-              user={{
-                id: "7",
-                name: "Hugo",
-                color: "#FFFFFF",
-                profilePictureUrl:
-                  "https://m.media-amazon.com/images/I/914KvMZNh8L._AC_SL1500_.jpg",
-              }}
-              customClickEvent={changeChat}
-            />
+            {...usersElements}
           </ul>
         </div>
 
