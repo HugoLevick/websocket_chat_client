@@ -21,7 +21,7 @@ function SignUpPage() {
       name,
       password,
       profilePictureUrl,
-      color: color || "$000000",
+      color: color || "#000000",
     };
     try {
       const accountCreated = await fetch(url, {
@@ -41,7 +41,7 @@ function SignUpPage() {
     } catch (error: any) {
       console.log(error);
       console.log(body);
-      setError(new Error("Hubo un error inesperado"));
+      return setError(new Error("Usuario ya registrado"));
     }
   }
 
