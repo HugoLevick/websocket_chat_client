@@ -61,7 +61,10 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
       for (const message of messagesFetch) {
         newM.push({
           ...message,
-          sentBy: JSON.parse(message.fromUser),
+          sentBy:
+            typeof message.fromUser === "string"
+              ? JSON.parse(message.fromUser)
+              : message.fromUser,
         });
       }
 
