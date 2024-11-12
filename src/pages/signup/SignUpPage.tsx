@@ -6,9 +6,9 @@ function SignUpPage() {
   const [name, setName] = useState(null as null | string);
   const [password, setPassword] = useState(null as null | string);
   const [color, setColor] = useState(null as null | string);
-  const [profilePictureUrl, setProfilePictureUrl] = useState(
-    null as null | string
-  );
+  // const [profilePictureUrl, setProfilePictureUrl] = useState(
+  //   null as null | string
+  // );
   if (error) {
     alert(error.message);
     setError(null);
@@ -20,7 +20,7 @@ function SignUpPage() {
     const body = {
       name,
       password,
-      profilePictureUrl,
+      // profilePictureUrl,
       color: color || "#000000",
     };
     try {
@@ -64,21 +64,22 @@ function SignUpPage() {
           placeholder="Name"
           id="name"
           onChange={(e) => {
-            setName(e.target.value);
+            setName(e.target.value.toLocaleLowerCase());
           }}
         />
 
-        <label htmlFor="profilePictureUrl">
+        {/* <label htmlFor="profilePictureUrl">
           Profile Picture URL (Optional)
         </label>
         <input
-          type="text"
+          type="file"
           placeholder="Profile Picture Url"
           id="profilePictureUrl"
           onChange={(e) => {
+            console.log(e.target.value);
             setProfilePictureUrl(e.target.value);
           }}
-        />
+        /> */}
 
         <label htmlFor="password">Password</label>
         <input

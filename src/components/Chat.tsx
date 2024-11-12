@@ -33,6 +33,7 @@ export const Chat = function ({
         <div className="chat-header clearfix">
           <img
             src={currentChatUser?.profilePictureUrl}
+            style={{ borderColor: currentChatUser?.color }}
             alt="avatar"
             className="pfp pfp-m"
           />
@@ -54,14 +55,14 @@ export const Chat = function ({
             }
 
             if (
-              (divElement?.scrollHeight || 0) -
-                (divElement?.scrollTop || 1000) <
-              400
-            )
+              (divElement?.scrollHeight || 0) - (divElement?.scrollTop || 0) <
+              800
+            ) {
               bottomChatElement.current?.scrollIntoView({ behavior: "smooth" });
+            }
           }}
         >
-          <ul>
+          <ul style={{ padding: 0 }}>
             {previousMessages ? (
               messageElements
             ) : (
@@ -83,11 +84,12 @@ export const Chat = function ({
           <form
             onSubmit={(ev) => {
               ev.preventDefault();
-              console.log("emit");
+              if (!message) return;
               socket.emit("new-message", {
                 content: message,
                 toUserId: currentChatUser?.id,
               });
+              setMessage("");
               if (messageElement.current) messageElement.current.value = "";
             }}
           >
@@ -100,7 +102,7 @@ export const Chat = function ({
                 messageElement.current = el;
               }}
               onInput={(event: ChangeEvent<HTMLTextAreaElement>) => {
-                const newMessage = event.target.value;
+                const newMessage = event.target.value.trim();
                 setMessage(newMessage);
               }}
               onKeyDown={(event) => {

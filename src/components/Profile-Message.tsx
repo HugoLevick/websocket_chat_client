@@ -16,15 +16,16 @@ function ProfileMessage({
       <div className="about">
         <div className="name">{user.name}</div>
         <div className="status">
-          {online ? (
-            <>
-              <i className="fa fa-circle online"></i> online{" "}
-            </>
-          ) : (
-            <>
-              <i className="fa fa-circle offline"></i> offline{" "}
-            </>
-          )}
+          <span
+            className={online ? "online" : "offline"}
+            style={{
+              display: "inline-block",
+              width: "8px",
+              height: "8px",
+              borderRadius: "50%",
+            }}
+          ></span>{" "}
+          {online ? "online" : "offline"}
         </div>
       </div>
     </li>

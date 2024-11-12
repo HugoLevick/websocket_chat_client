@@ -25,8 +25,7 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
   const [currentChatUser, setCurrentChatUser] = useState({
     id: "general",
     name: "General",
-    profilePictureUrl:
-      "https://cdn2.iconfinder.com/data/icons/colored-simple-circle-volume-01/128/circle-flat-general-54205e542-512.png",
+    profilePictureUrl: "/general.webp",
   } as UserI);
 
   const { jwt } = localStorage;
@@ -37,7 +36,7 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
   const [isConnected, setIsConnected] = useState(socket.connected);
 
   //Scroll down each message
-  const bottomChatElement = useRef(null as null | HTMLDivElement);
+  const bottomChatElement = useRef<null | HTMLDivElement>(null);
 
   let onlineUsersElements: ReactElement[] = [];
   let offlineUsersElements: ReactElement[] = [];
@@ -116,7 +115,7 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
           else return [newMessage];
         });
       } else {
-        toast("Nuevo mensaje de " + newMessage.sentBy.name, {
+        toast(`${newMessage.sentBy.name}: ${newMessage.content}`, {
           onClick: () => {
             changeChat(newMessage.sentBy);
           },
@@ -195,6 +194,7 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
       setCurrentChatUser(user);
     }
   }
+
   return (
     <>
       <ToastContainer />
@@ -206,9 +206,8 @@ function ChatPage({ selfUser, socket }: { selfUser: UserI; socket: Socket }) {
               user={{
                 id: "general",
                 name: "General",
-                color: "#FFFFFF",
-                profilePictureUrl:
-                  "https://cdn2.iconfinder.com/data/icons/colored-simple-circle-volume-01/128/circle-flat-general-54205e542-512.png",
+                color: "#000000",
+                profilePictureUrl: "/general.webp",
               }}
               online={true}
               customClickEvent={changeChat}
